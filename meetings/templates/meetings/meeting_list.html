@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">My Meetings</h2>
+
+  <a href="{% url 'create_meeting' %}" class="btn btn-primary mb-3">Create New Meeting</a>
+
+  {% if meetings %}
+  <div class="list-group">
+    {% for meeting in meetings %}
+    <a href="{% url 'meeting_detail' meeting.id %}" class="list-group-item list-group-item-action">
+      <h5 class="mb-1">{{ meeting.title }}</h5>
+      <p class="mb-1 text-muted">{{ meeting.room.name }} • {{ meeting.start_time|date:"M d, Y H:i" }}</p>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info">You haven’t created any meetings yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

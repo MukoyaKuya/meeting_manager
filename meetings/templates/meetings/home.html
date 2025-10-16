@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="text-center mt-5">
+    <h1 class="display-5">The Meeting Manager App</h1>
+    <p class="lead">Easily schedule, view, and manage your meetings in one place.</p>
+    <a href="{% url 'create_meeting' %}" class="btn btn-primary mt-3">Create a New Meeting</a>
+    <a href="{% url 'meeting_list' %}" class="btn btn-outline-secondary mt-3">View My Meetings</a>
+</div>
+{% endblock %}

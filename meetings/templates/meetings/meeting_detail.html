@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>{{ meeting.title }}</h2>
+  <p><strong>Room:</strong> {{ meeting.room.name }}</p>
+  <p><strong>Organizer:</strong> {{ meeting.organizer.username }}</p>
+  <p><strong>Start:</strong> {{ meeting.start_time|date:"M d, Y H:i" }}</p>
+  <p><strong>End:</strong> {{ meeting.end_time|date:"M d, Y H:i" }}</p>
+  <p><strong>Description:</strong> {{ meeting.description }}</p>
+
+  <a href="{% url 'edit_meeting' meeting.id %}" class="btn btn-warning">Edit</a>
+  <a href="{% url 'delete_meeting' meeting.id %}" class="btn btn-danger">Delete</a>
+  <a href="{% url 'meeting_list' %}" class="btn btn-secondary">Back</a>
+</div>
+{% endblock %}
