@@ -8,7 +8,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{% url 'home' %}">Meeting Manager</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -28,13 +28,15 @@
                     </li>
 
                     {% if user.is_authenticated %}
+                        <!-- Authenticated: Show logout -->
                         <li class="nav-item ms-3">
-                            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            <form method="post" action="{% url 'logout' %}" class="d-inline">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-outline-light btn-sm px-3">Logout</button>
                             </form>
                         </li>
                     {% else %}
+                        <!-- Not logged in: show Login/Sign Up -->
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">Login</a>
                         </li>
@@ -47,7 +49,7 @@
         </div>
     </nav>
 
-    <!-- Messages -->
+    <!-- Flash messages -->
     {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
@@ -60,10 +62,9 @@
     {% endif %}
 
     <!-- Page Content -->
-    <div class="container mt-4 mb-5">
-        {% block content %}
-        {% endblock %}
-    </div>
+    <main class="container mt-4 mb-5">
+        {% block content %}{% endblock %}
+    </main>
 
     <footer class="text-center text-muted mt-5 mb-3">
         <small>&copy; {{ now|date:"Y" }} Meeting Manager 2025 Capstone Project</small>

@@ -1,12 +1,17 @@
 from django.contrib import admin
 from django.urls import path, include
-from meetings import views as meeting_views
-from django.contrib.auth import views as auth_views  
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # Authentication (Login + Logout)
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+
+    # Include app URLs
     path('', include('meetings.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),  # includes login/logout views by default
-    path('signup/', meeting_views.signup_view, name='signup'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+
+    # Django default auth URLs (password reset, etc.)
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
