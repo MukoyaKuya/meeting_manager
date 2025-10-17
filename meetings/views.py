@@ -7,15 +7,19 @@ from django.contrib.auth import login
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db.models import Q
+from zoneinfo import ZoneInfo  
 
 from .forms import MeetingForm
 from .models import Meeting
 
+# Define the Nairobi timezone
+NAIROBI_TZ = ZoneInfo("Africa/Nairobi")
 
-# Home Page: simple dashboard counts
+
+# 🏠 Home Page — Dashboard summary
 @login_required
 def home(request):
-    now = timezone.localtime()
+    now = timezone.now().astimezone(NAIROBI_TZ)
     qs = Meeting.objects.filter(organizer=request.user)
 
     total_meetings = qs.count()
@@ -33,7 +37,7 @@ def home(request):
     return render(request, "meetings/home.html", context)
 
 
-# Create Meeting
+# ➕ Create Meeting
 @login_required
 def create_meeting(request):
     if request.method == "POST":
@@ -42,40 +46,37 @@ def create_meeting(request):
             meeting = form.save(commit=False)
             meeting.organizer = request.user
             meeting.save()
-            messages.success(request, "Meeting created successfully!")
+            messages.success(request, "✅ Meeting created successfully!")
             return redirect("meeting_list")
-        messages.error(request, "Please correct the errors below.")
+        messages.error(request, "⚠️ Please correct the errors below.")
     else:
         form = MeetingForm()
     return render(request, "meetings/create_meeting.html", {"form": form})
 
 
-# Meeting List with Search + Filters + Pagination
+# 📋 Meeting List with Search + Filter + Pagination
 @login_required
 def meeting_list(request):
     """
-    Query params supported:
-      - q: search in title/description/room name
-      - status: upcoming|ongoing|ended|all (default: all)
-      - date_from: YYYY-MM-DD
-      - date_to: YYYY-MM-DD
-      - page: pagination page number
-      - per_page: items per page (default: 10)
+    Supports filters:
+      - q: search by title, description, or room
+      - status: upcoming|ongoing|ended|all
+      - date_from / date_to
+      - per_page (default 10)
     """
-    now = timezone.localtime()
+    now = timezone.now().astimezone(NAIROBI_TZ)
     qs = Meeting.objects.filter(organizer=request.user).order_by("-start_time")
 
-    # --- Search ---
+    # 🔍 Search
     q = (request.GET.get("q") or "").strip()
     if q:
-        # Use Q lookups; guard for room relationship by name if present
         qs = qs.filter(
             Q(title__icontains=q)
             | Q(description__icontains=q)
-            | Q(room__name__icontains=q)  # safe even if room is nullable
+            | Q(room__name__icontains=q)
         )
 
-    # --- Status filter ---
+    # ⚙️ Status Filter
     status = (request.GET.get("status") or "all").lower()
     if status == "upcoming":
         qs = qs.filter(start_time__gt=now)
@@ -83,18 +84,16 @@ def meeting_list(request):
         qs = qs.filter(start_time__lte=now, end_time__gte=now)
     elif status == "ended":
         qs = qs.filter(end_time__lt=now)
-    # else: "all" → no extra filter
 
-    # --- Date range filters (optional) ---
+    # 📆 Date Range Filters
     date_from = request.GET.get("date_from")
     date_to = request.GET.get("date_to")
-    # We only filter on the date component of start_time if provided
     if date_from:
         qs = qs.filter(start_time__date__gte=date_from)
     if date_to:
         qs = qs.filter(start_time__date__lte=date_to)
 
-    # --- Pagination ---
+    # 📑 Pagination
     try:
         per_page = int(request.GET.get("per_page", 10))
         if per_page <= 0:
@@ -111,7 +110,6 @@ def meeting_list(request):
         "page_obj": page_obj,
         "paginator": paginator,
         "now": now,
-        # keep current filters in the template (for form repopulation + pagination links)
         "q": q,
         "status": status,
         "date_from": date_from or "",
@@ -121,7 +119,7 @@ def meeting_list(request):
     return render(request, "meetings/meeting_list.html", context)
 
 
-# Meeting Details
+# 📄 Meeting Details
 @login_required
 def meeting_detail(request, meeting_id):
     meeting = get_object_or_404(Meeting, id=meeting_id, organizer=request.user)
@@ -137,7 +135,7 @@ def edit_meeting(request, meeting_id):
         form = MeetingForm(request.POST, instance=meeting)
         if form.is_valid():
             form.save()
-            messages.success(request, "Meeting updated.")
+            messages.success(request, "Meeting updated successfully.")
             return redirect("meeting_detail", meeting_id=meeting.id)
         messages.error(request, "Please correct the errors below.")
     else:
@@ -148,13 +146,13 @@ def edit_meeting(request, meeting_id):
     )
 
 
-# Delete Meeting (POST)
+# 🗑️ Delete Meeting
 @login_required
 def delete_meeting(request, meeting_id):
     meeting = get_object_or_404(Meeting, id=meeting_id, organizer=request.user)
     if request.method == "POST":
         meeting.delete()
-        messages.warning(request, "Meeting deleted.")
+        messages.warning(request, "Meeting deleted successfully.")
         return redirect("meeting_list")
     return render(
         request, "meetings/meeting_confirm_delete.html", {"meeting": meeting}
@@ -168,7 +166,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Account created. Welcome!")
+            messages.success(request, "🎉 Account created successfully. Welcome!")
             return redirect("home")
         messages.error(request, "Please correct the errors below.")
     else:

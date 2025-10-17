@@ -1,12 +1,77 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="card shadow-sm p-4">
-    <h3 class="mb-3">Create Meeting</h3>
-    <form method="post">
+<div class="container mt-5">
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+      <h3 class="fw-bold text-center mb-4">🗓 Create a New Meeting</h3>
+
+      <form method="POST" novalidate>
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="{% url 'meeting_list' %}" class="btn btn-secondary">Cancel</a>
-    </form>
+        <div class="row g-3">
+          <!-- Title -->
+          <div class="col-md-6">
+            <label for="id_title" class="form-label fw-semibold">Title</label>
+            {{ form.title }}
+            {{ form.title.errors }}
+          </div>
+
+          <!-- Room -->
+          <div class="col-md-6">
+            <label for="id_room" class="form-label fw-semibold">Room</label>
+            {{ form.room }}
+            {{ form.room.errors }}
+          </div>
+
+          <!-- Description -->
+          <div class="col-12">
+            <label for="id_description" class="form-label fw-semibold">Description</label>
+            {{ form.description }}
+            {{ form.description.errors }}
+          </div>
+
+          <!-- Start Time -->
+          <div class="col-md-6">
+            <label for="id_start_time" class="form-label fw-semibold">Start Time</label>
+            <input type="text" name="start_time" id="id_start_time"
+                   class="form-control datetimepicker"
+                   placeholder="Select start time"
+                   value="{{ form.start_time.value|default:'' }}" required>
+          </div>
+
+          <!-- End Time -->
+          <div class="col-md-6">
+            <label for="id_end_time" class="form-label fw-semibold">End Time</label>
+            <input type="text" name="end_time" id="id_end_time"
+                   class="form-control datetimepicker"
+                   placeholder="Select end time"
+                   value="{{ form.end_time.value|default:'' }}" required>
+          </div>
+
+          <!-- Submit -->
+          <div class="col-12 text-center mt-4">
+            <button type="submit" class="btn btn-dark px-5 py-2">💾 Save Meeting</button>
+            <a href="{% url 'meeting_list' %}" class="btn btn-outline-secondary ms-2 px-4 py-2">Cancel</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
+
+<!-- Flatpickr (Date & Time Picker) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    flatpickr(".datetimepicker", {
+      enableTime: true,
+      dateFormat: "Y-m-d H:i",
+      time_24hr: true,
+      minDate: "today",
+      minuteIncrement: 15
+    });
+  });
+</script>
 {% endblock %}

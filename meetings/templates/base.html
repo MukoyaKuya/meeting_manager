@@ -1,3 +1,5 @@
+{% load static tz %}
+{% timezone "Africa/Nairobi" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,10 +68,17 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Footer -->
     <footer class="text-center text-muted mt-5 mb-3">
-        <small>&copy; {{ now|date:"Y" }} Meeting Manager 2025 Capstone Project</small>
+        <div>
+            <small>&copy; {{ now|date:"Y" }} Meeting Manager — Capstone Project</small><br>
+            <small>
+                🕒 Current time (Africa/Nairobi): {% now "M d, Y h:i A" %}
+            </small>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+{% endtimezone %}
