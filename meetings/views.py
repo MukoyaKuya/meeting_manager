@@ -7,19 +7,18 @@ from django.contrib.auth import login
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db.models import Q
-from zoneinfo import ZoneInfo  
 
 from .forms import MeetingForm
 from .models import Meeting
 
-# Define the Nairobi timezone
-NAIROBI_TZ = ZoneInfo("Africa/Nairobi")
 
-
-# 🏠 Home Page — Dashboard summary
+# -----------------------------------
+# HOME DASHBOARD
+# -----------------------------------
 @login_required
 def home(request):
-    now = timezone.now().astimezone(NAIROBI_TZ)
+    """User dashboard showing meeting stats for their own meetings only"""
+    now = timezone.localtime()
     qs = Meeting.objects.filter(organizer=request.user)
 
     total_meetings = qs.count()
@@ -37,7 +36,9 @@ def home(request):
     return render(request, "meetings/home.html", context)
 
 
-# ➕ Create Meeting
+# -----------------------------------
+# CREATE MEETING (with conflict check)
+# -----------------------------------
 @login_required
 def create_meeting(request):
     if request.method == "POST":
@@ -45,29 +46,41 @@ def create_meeting(request):
         if form.is_valid():
             meeting = form.save(commit=False)
             meeting.organizer = request.user
+
+            # Prevent booking conflict (same room overlapping time)
+            conflict_exists = Meeting.objects.filter(
+                room=meeting.room,
+                start_time__lt=meeting.end_time,
+                end_time__gt=meeting.start_time,
+            ).exists()
+
+            if conflict_exists:
+                messages.error(
+                    request,
+                    f"A meeting already exists in {meeting.room.name} during this time. Please choose another slot.",
+                )
+                return render(request, "meetings/create_meeting.html", {"form": form})
+
             meeting.save()
-            messages.success(request, "✅ Meeting created successfully!")
+            messages.success(request, "Meeting created successfully!")
             return redirect("meeting_list")
-        messages.error(request, "⚠️ Please correct the errors below.")
+
+        messages.error(request, "Please correct the errors below.")
     else:
         form = MeetingForm()
     return render(request, "meetings/create_meeting.html", {"form": form})
 
 
-# 📋 Meeting List with Search + Filter + Pagination
+# -----------------------------------
+# USER’S MEETINGS LIST (PRIVATE)
+# -----------------------------------
 @login_required
 def meeting_list(request):
-    """
-    Supports filters:
-      - q: search by title, description, or room
-      - status: upcoming|ongoing|ended|all
-      - date_from / date_to
-      - per_page (default 10)
-    """
-    now = timezone.now().astimezone(NAIROBI_TZ)
+    """Shows ONLY meetings created by the logged-in user"""
+    now = timezone.localtime()
     qs = Meeting.objects.filter(organizer=request.user).order_by("-start_time")
 
-    # 🔍 Search
+    # Filters
     q = (request.GET.get("q") or "").strip()
     if q:
         qs = qs.filter(
@@ -76,7 +89,6 @@ def meeting_list(request):
             | Q(room__name__icontains=q)
         )
 
-    # ⚙️ Status Filter
     status = (request.GET.get("status") or "all").lower()
     if status == "upcoming":
         qs = qs.filter(start_time__gt=now)
@@ -85,7 +97,6 @@ def meeting_list(request):
     elif status == "ended":
         qs = qs.filter(end_time__lt=now)
 
-    # 📆 Date Range Filters
     date_from = request.GET.get("date_from")
     date_to = request.GET.get("date_to")
     if date_from:
@@ -93,17 +104,13 @@ def meeting_list(request):
     if date_to:
         qs = qs.filter(start_time__date__lte=date_to)
 
-    # 📑 Pagination
     try:
         per_page = int(request.GET.get("per_page", 10))
-        if per_page <= 0:
-            per_page = 10
     except ValueError:
         per_page = 10
 
     paginator = Paginator(qs, per_page)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator.get_page(request.GET.get("page"))
 
     context = {
         "meetings": page_obj.object_list,
@@ -119,14 +126,52 @@ def meeting_list(request):
     return render(request, "meetings/meeting_list.html", context)
 
 
-# 📄 Meeting Details
+# -----------------------------------
+# ALL MEETINGS (READ-ONLY)
+# -----------------------------------
+@login_required
+def all_meetings(request):
+    """
+    Displays ALL meetings from all users (read-only view).
+    """
+    now = timezone.localtime()
+    qs = Meeting.objects.all().order_by("-start_time")
+
+    q = (request.GET.get("q") or "").strip()
+    if q:
+        qs = qs.filter(
+            Q(title__icontains=q)
+            | Q(description__icontains=q)
+            | Q(room__name__icontains=q)
+            | Q(organizer__username__icontains=q)
+        )
+
+    paginator = Paginator(qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    context = {
+        "meetings": page_obj.object_list,
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "now": now,
+        "q": q,
+    }
+    return render(request, "meetings/all_meetings.html", context)
+
+
+# -----------------------------------
+# MEETING DETAILS
+# -----------------------------------
 @login_required
 def meeting_detail(request, meeting_id):
-    meeting = get_object_or_404(Meeting, id=meeting_id, organizer=request.user)
+    """Show meeting details (any user can view)"""
+    meeting = get_object_or_404(Meeting, id=meeting_id)
     return render(request, "meetings/meeting_detail.html", {"meeting": meeting})
 
 
-# Edit Meeting
+# -----------------------------------
+# EDIT MEETING
+# -----------------------------------
 @login_required
 def edit_meeting(request, meeting_id):
     meeting = get_object_or_404(Meeting, id=meeting_id, organizer=request.user)
@@ -134,7 +179,26 @@ def edit_meeting(request, meeting_id):
     if request.method == "POST":
         form = MeetingForm(request.POST, instance=meeting)
         if form.is_valid():
-            form.save()
+            updated = form.save(commit=False)
+
+            overlap = Meeting.objects.filter(
+                room=updated.room,
+                start_time__lt=updated.end_time,
+                end_time__gt=updated.start_time,
+            ).exclude(id=meeting.id).exists()
+
+            if overlap:
+                messages.error(
+                    request,
+                    f"Another meeting already exists in {updated.room.name} at that time.",
+                )
+                return render(
+                    request,
+                    "meetings/meeting_edit.html",
+                    {"form": form, "meeting": meeting},
+                )
+
+            updated.save()
             messages.success(request, "Meeting updated successfully.")
             return redirect("meeting_detail", meeting_id=meeting.id)
         messages.error(request, "Please correct the errors below.")
@@ -146,27 +210,31 @@ def edit_meeting(request, meeting_id):
     )
 
 
-# 🗑️ Delete Meeting
+# -----------------------------------
+# DELETE MEETING
+# -----------------------------------
 @login_required
 def delete_meeting(request, meeting_id):
     meeting = get_object_or_404(Meeting, id=meeting_id, organizer=request.user)
     if request.method == "POST":
         meeting.delete()
-        messages.warning(request, "Meeting deleted successfully.")
+        messages.warning(request, "Meeting deleted.")
         return redirect("meeting_list")
     return render(
         request, "meetings/meeting_confirm_delete.html", {"meeting": meeting}
     )
 
 
-# Signup
+# -----------------------------------
+# USER SIGNUP
+# -----------------------------------
 def signup_view(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "🎉 Account created successfully. Welcome!")
+            messages.success(request, "Account created successfully. Welcome!")
             return redirect("home")
         messages.error(request, "Please correct the errors below.")
     else:
