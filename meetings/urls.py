@@ -14,4 +14,5 @@ urlpatterns = [
     path("meetings/<int:meeting_id>/delete/", views.delete_meeting, name="delete_meeting"),
     path("all_meetings/", views.all_meetings, name="all_meetings"),
     path("signup/", views.signup_view, name="signup"),
+    path("minutes_repository/", views.minutes_repository, name="minutes_repository"),
 ]

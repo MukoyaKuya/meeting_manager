@@ -1,4 +1,3 @@
-# meeting_manager/settings.py
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,7 +39,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "django.template.context_processors.tz",  # Adds timezone info
+                "django.template.context_processors.tz",
             ],
         },
     },
@@ -66,17 +65,20 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # ---------- TIMEZONE & LOCALIZATION ----------
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "Africa/Nairobi"  # Kenya local time
+TIME_ZONE = "Africa/Nairobi"
 USE_I18N = True
 USE_TZ = True
-USE_L10N = False  # Avoid automatic format conflicts
-
-# Force 12-hour format globally
+USE_L10N = False
 DATETIME_FORMAT = "M d, Y h:i A"
 TIME_FORMAT = "h:i A"
 
-# ---------- STATIC FILES ----------
+# ---------- STATIC & MEDIA FILES ----------
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# Added for file uploads (meeting minutes)
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

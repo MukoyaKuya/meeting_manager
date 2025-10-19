@@ -5,11 +5,13 @@
 <div class="container mt-5">
   <div class="card shadow-sm border-0 rounded-4">
     <div class="card-body p-4">
-      <h3 class="fw-bold text-center mb-4">🗓 Create a New Meeting</h3>
+      <h3 class="fw-bold text-center mb-4">Create a New Meeting</h3>
 
-      <form method="POST" novalidate>
+      <!-- Add enctype for file uploads -->
+      <form method="POST" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
         <div class="row g-3">
+
           <!-- Title -->
           <div class="col-md-6">
             <label for="id_title" class="form-label fw-semibold">Title</label>
@@ -34,24 +36,28 @@
           <!-- Start Time -->
           <div class="col-md-6">
             <label for="id_start_time" class="form-label fw-semibold">Start Time</label>
-            <input type="text" name="start_time" id="id_start_time"
-                   class="form-control datetimepicker"
-                   placeholder="Select start time"
-                   value="{{ form.start_time.value|default:'' }}" required>
+            {{ form.start_time }}
+            {{ form.start_time.errors }}
           </div>
 
           <!-- End Time -->
           <div class="col-md-6">
             <label for="id_end_time" class="form-label fw-semibold">End Time</label>
-            <input type="text" name="end_time" id="id_end_time"
-                   class="form-control datetimepicker"
-                   placeholder="Select end time"
-                   value="{{ form.end_time.value|default:'' }}" required>
+            {{ form.end_time }}
+            {{ form.end_time.errors }}
+          </div>
+
+          <!-- Upload Minutes -->
+          <div class="col-12">
+            <label for="id_minutes_file" class="form-label fw-semibold">Upload Meeting Minutes (optional)</label>
+            {{ form.minutes_file }}
+            <small class="text-muted d-block mt-1">Accepted formats: PDF, DOC, DOCX, TXT</small>
+            {{ form.minutes_file.errors }}
           </div>
 
           <!-- Submit -->
           <div class="col-12 text-center mt-4">
-            <button type="submit" class="btn btn-dark px-5 py-2">💾 Save Meeting</button>
+            <button type="submit" class="btn btn-dark px-5 py-2">Save Meeting</button>
             <a href="{% url 'meeting_list' %}" class="btn btn-outline-secondary ms-2 px-4 py-2">Cancel</a>
           </div>
         </div>

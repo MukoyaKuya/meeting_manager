@@ -42,7 +42,7 @@ def home(request):
 @login_required
 def create_meeting(request):
     if request.method == "POST":
-        form = MeetingForm(request.POST)
+        form = MeetingForm(request.POST, request.FILES)
         if form.is_valid():
             meeting = form.save(commit=False)
             meeting.organizer = request.user
@@ -170,14 +170,14 @@ def meeting_detail(request, meeting_id):
 
 
 # -----------------------------------
-# EDIT MEETING
+# EDIT MEETING (with file upload)
 # -----------------------------------
 @login_required
 def edit_meeting(request, meeting_id):
     meeting = get_object_or_404(Meeting, id=meeting_id, organizer=request.user)
 
     if request.method == "POST":
-        form = MeetingForm(request.POST, instance=meeting)
+        form = MeetingForm(request.POST, request.FILES, instance=meeting)
         if form.is_valid():
             updated = form.save(commit=False)
 
@@ -199,7 +199,7 @@ def edit_meeting(request, meeting_id):
                 )
 
             updated.save()
-            messages.success(request, "Meeting updated successfully.")
+            messages.success(request, "Meeting updated successfully (including minutes if uploaded).")
             return redirect("meeting_detail", meeting_id=meeting.id)
         messages.error(request, "Please correct the errors below.")
     else:
@@ -223,6 +223,37 @@ def delete_meeting(request, meeting_id):
     return render(
         request, "meetings/meeting_confirm_delete.html", {"meeting": meeting}
     )
+
+# -----------------------------------
+# MINUTES REPOSITORY (NEW)
+# -----------------------------------
+@login_required
+def minutes_repository(request):
+    """Displays all meetings that have uploaded minutes"""
+    now = timezone.localtime()
+    qs = Meeting.objects.filter(minutes_file__isnull=False).exclude(minutes_file="").order_by("-start_time")
+
+    q = (request.GET.get("q") or "").strip()
+    if q:
+        qs = qs.filter(
+            Q(title__icontains=q)
+            | Q(description__icontains=q)
+            | Q(room__name__icontains=q)
+            | Q(organizer__username__icontains=q)
+        )
+
+    paginator = Paginator(qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    context = {
+        "meetings": page_obj.object_list,
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "now": now,
+        "q": q,
+    }
+    return render(request, "meetings/minutes_repository.html", context)
+
 
 
 # -----------------------------------
