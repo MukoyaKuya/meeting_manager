@@ -1,24 +1,22 @@
-# Meeting Manager — Django Web Application  
+# Meeting Manager (Django + Bootstrap 5) - Mkutano IO APP
 
-A modern meeting management system built with **Django 5** that allows users to **schedule, manage, and view meetings** seamlessly.  
-It features **smart time conflict detection**, **meeting status tracking**, and a **a Bootstrap-based interface**.  
-Developed as part of the **ALX Back-End Web Development Capstone Project**.
+A modern meeting management system built with **Django**, **Python**, and **Bootstrap 5**, allowing users to **schedule, manage, and track meetings** seamlessly.  
+It features a **Bootstrap 5 interface**, a personalized dashboard, and complete **CRUD functionality**.  This is my submission for the **ALX Back-End Web Development Capstone Project**.
 
 ---
 
 ## Features
 
-- **User Authentication** — Sign up, login, and logout securely using Django’s auth system  
-- **Personalized Dashboard** — Each user sees only their own meetings  
-- **All Meetings Page** — Read-only access to meetings created by all users  
-- **Conflict Prevention** — Prevents booking the same room at overlapping times  
-- **Smart Status Labels** — Meetings show as *Upcoming*, *Ongoing*, or *Ended*  
-- **Search & Filtering** — Search by title, description, or room name  
-- **Date Range Filters** — Filter meetings by start and end dates  
-- **Pagination** — View results in pages for better performance  
-- **Timezone Aware** — Automatically localized to `Kenya,Nairobi`  
-- **Bootstrap Alerts** — Displays success, warning, and error messages  
-- **Responsive UI** — Elegant and mobile-friendly layout using Bootstrap 5
+- **User Authentication** — Secure login, signup, and logout using Django’s built-in auth system  
+- **Personalized Dashboard** — Displays stats (Upcoming, Ongoing, Ended meetings) for each user  
+- **All Meetings Page** — Read-only list of all meetings created by all users (admin view)  
+- **Smart Conflict Detection** — Prevents room double-booking for overlapping times  
+- **Dynamic Status Tracking** — Meetings automatically show as *Upcoming*, *Ongoing*, or *Ended*  
+- **Search & Filtering** — Search by title, description, or room; filter by status or date range  
+- **Pagination** — Smooth navigation through large meeting lists  
+- **Timezone Aware** — Automatically localized to `Africa/Nairobi`  
+- **Responsive UI** — Built with **Bootstrap 5** for an elegant, mobile-friendly experience  
+- **File Uploads** — Attach optional meeting minutes (PDF/DOC/TXT)  
 
 ---
 
@@ -27,12 +25,12 @@ Developed as part of the **ALX Back-End Web Development Capstone Project**.
 ```
 meeting_manager/
 │
-├── meeting_manager/           # Project settings & URLs
+├── meeting_manager/           # Project configuration
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
 │
-├── meetings/                  # Core meetings application
+├── meetings/                  # Core application
 │   ├── models.py
 │   ├── views.py
 │   ├── urls.py
@@ -40,7 +38,8 @@ meeting_manager/
 │   ├── templates/
 │   │   ├── base.html
 │   │   ├── meetings/
-│   │   │   ├── meeting_list.html
+│   │   │   ├── home.html
+│   │   │   ├── my_meetings.html
 │   │   │   ├── all_meetings.html
 │   │   │   ├── create_meeting.html
 │   │   │   ├── meeting_detail.html
@@ -67,69 +66,61 @@ git clone https://github.com/MukoyaKuya/meeting_manager.git
 cd meeting_manager
 ```
 
-### 2. Create & Activate a Virtual Environment
+### 2. Create & Activate Virtual Environment
 
-**Windows (PowerShell):**
+**For Windows:**
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 ```
 
-**Mac/Linux:**
+**If you're using Mac/Linux:**
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3️. Install Dependencies
+### 3.Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4️. Apply Database Migrations
+### 4. Apply Database Migrations
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 5. Create an Admin User
-```bash
-python manage.py createsuperuser
-```
-
-### 6. Run the Development Server
+### 6. Run Server
+Go to terminal and run:
 ```bash
 python manage.py runserver
 ```
 
-Visit **http://127.0.0.1:8000/** in your browser.
+Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your browser.
 
 ---
 
 ## Key Functionalities
 
 ### Conflict Detection
-Before a meeting is saved, the system automatically checks:
-> “Is there any other meeting in the same room that overlaps with this time?”
-
-If yes, the meeting creation is **blocked** with a friendly error message.
+Before saving a meeting, the app checks if another meeting exists in the same room with overlapping times. If yes, it blocks the save with a warning.
 
 ### Meeting Visibility
-- Each user sees **only their meetings** on the *My Meetings* page.  
-- The *All Meetings* page lists all meetings (read-only view).
+- *My Meetings* — shows meetings created by the logged-in user.  
+- *All Meetings* — read-only list for all users.
 
-### Meeting Status Logic
-Meetings dynamically change color & status based on time:
-- 🟦 **Upcoming** — Starts in the future  
-- 🟩 **Ongoing** — Happening now  
-- 🟥 **Ended** — Already finished  
+### Status Logic
+Meetings automatically update their status based on time:
+- 🟦 **Upcoming** — Scheduled for later  
+- 🟩 **Ongoing** — Currently active  
+- 🟥 **Ended** — Finished
 
 ### Search & Filters
-Search by:
-- Meeting title or description  
-- Room name  
-- Organizer username  
-- Filter by date range or meeting status  
+Users can search meetings by:
+- Title / Description  
+- Room Name / Organizer  
+- Filter by status or date range
 
 ---
 
@@ -137,12 +128,12 @@ Search by:
 
 | Layer | Technology |
 |-------|-------------|
-| Backend | Django 5.2.7 |
-| Frontend | HTML5, Bootstrap 5 |
-| Database | SQLite (default) |
-| Auth | Django’s built-in User Model |
-| Timezone | Africa/Nairobi |
-| Deployment-ready | Whitenoise + Gunicorn (optional) |
+| **Backend** | Django 5.x |
+| **Frontend** | Bootstrap 5, HTML5, CSS3 |
+| **Database** | SQLite |
+| **Auth** | Django Auth Framework |
+| **Timezone** | Africa/Nairobi |
+| **Deployment** |(Not yet deployed)|
 
 ---
 
@@ -161,30 +152,29 @@ django-bootstrap4==24.3
 
 ## Roadmap / Future Enhancements
 
-- **Email Notifications** — Send meeting reminders  
-- **Export Options** — Download meetings as CSV or PDF  
-- **Calendar View** — Visual meeting scheduling (FullCalendar.js)  
-- **Role Management** — Admin vs Regular users  
-- **Cloud Deployment** — Render / Railway hosting  
+- Email Notifications for meeting reminders  
+- Export meetings as CSV / PDF  
+- Calendar View (FullCalendar.js integration)  
+- Cloud deployment on Render / Railway  
+- Future minutes analysis
+- Transcription service in the app
+- Proper minutes Archive
 
 ---
 
 ## Author
 
-**Delton Mukoya**  
+**Delton Mukoya Kuya**  
 Nairobi County, Kenya  
-🔗 [GitHub: MukoyaKuya](https://github.com/MukoyaKuya)  
-
+[GitHub: MukoyaKuya](https://github.com/MukoyaKuya)
 
 ---
 
 ## License
-
-This project is licensed under the **MIT License** — free to use, modify, and distribute for educational and non-commercial purposes.
+Licensed under the **MIT License** — free to use, modify, and distribute for educational and non-commercial purposes.
 
 ---
 
-### Support & Contribution
-
-If you find this project helpful, please **star the repository** on GitHub.  
+## ⭐ Support & Contribution
+If you find this project helpful, please **star the repository** ⭐  
 Pull requests, issues, and suggestions are welcome!
