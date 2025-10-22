@@ -1,17 +1,149 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="container mt-5" style="max-width: 450px;">
-    <div class="card shadow-sm p-4">
-        <h3 class="text-center mb-3">Login to Meeting Manager</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
-        </form>
-        <p class="text-center mt-3">
-            Don't have an account? 
-            <a href="{% url 'signup' %}">Sign up</a>
+<style>
+  /* ===== Global Background ===== */
+  body {
+    background: linear-gradient(135deg, #f8fafc 0%, #eef3ff 100%);
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ===== Login Card ===== */
+  .login-card {
+    max-width: 900px;
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+  }
+
+  /* ===== Left Side Branding ===== */
+  .login-left {
+    background: #f8f9fb;
+  }
+
+  .login-left img {
+    max-height: 120px;
+    opacity: 0.95;
+  }
+
+  .login-left h5 {
+    font-weight: 700;
+    color: #0b1e4e;
+  }
+
+  .login-left p {
+    color: #6c757d;
+  }
+
+  /* ===== Right Side Form ===== */
+  .login-right {
+    background: #ffffff;
+    padding: 3rem 3rem;
+  }
+
+  .login-right h3 {
+    font-weight: 700;
+    color: #0b1e4e;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .form-control {
+    width: 100%;
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid #cdd2e0;
+    font-size: 0.95rem;
+  }
+
+  .form-control:focus {
+    border-color: #0b1e4e;
+    box-shadow: 0 0 0 0.2rem rgba(11, 30, 78, 0.15);
+  }
+
+  /* ===== Button Styling ===== */
+  .btn-primary {
+    background-color: #0b1e4e;
+    border: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #0a2a7a;
+    transform: translateY(-1px);
+  }
+
+  /* ===== Signup Text ===== */
+  .text-center small {
+    font-size: 0.9rem;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 767px) {
+    .login-left {
+      display: none;
+    }
+    .login-right {
+      padding: 2.5rem 1.8rem;
+    }
+  }
+</style>
+
+<div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+  <div class="card login-card w-100">
+    <div class="row g-0">
+
+      <!-- LEFT SIDE -->
+      <div class="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center login-left text-center p-5">
+        <img src="{% static 'images/mkutano_logo.png' %}" alt="Mkutano IO Logo" class="img-fluid mb-3">
+        <h5 class="fw-bold mb-3">Karibu Tena!</h5>
+        <p class="small mb-0">
+          Log in to your meeting manager.<br>
+          Create and manage every meeting efficiently.
         </p>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="col-md-6 login-right d-flex flex-column justify-content-center">
+        <h3 class="text-center">Sign In</h3>
+
+        {% if form.errors %}
+          <div class="alert alert-danger py-2 small text-center mb-3">
+            Invalid username or password. Please try again.
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate class="w-100 mx-auto" style="max-width: 400px;">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+            {{ form.username }}
+          </div>
+
+          <div class="mb-4">
+            <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+            {{ form.password }}
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 py-2">Login</button>
+
+          <div class="text-center mt-3">
+            <small>Don’t have an account?
+              <a href="{% url 'signup' %}" class="text-decoration-none text-primary fw-semibold">Sign up here.</a>
+            </small>
+          </div>
+        </form>
+      </div>
+
     </div>
+  </div>
 </div>
 {% endblock %}

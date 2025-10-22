@@ -6,7 +6,7 @@ class MeetingRoomAdmin(admin.ModelAdmin):
     list_display = ('name', 'location', 'capacity', 'created_at')
     search_fields = ('name', 'location')
 
-    # Only superusers or staff can add/delete rooms
+    # This only allows superusers or staff to add/delete rooms
     def has_add_permission(self, request):
         return request.user.is_superuser or request.user.is_staff
 

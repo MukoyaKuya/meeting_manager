@@ -1,14 +1,12 @@
-# meetings/views.py
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db.models import Q
 
-from .forms import MeetingForm
+from .forms import MeetingForm, CustomUserCreationForm
 from .models import Meeting
 
 
@@ -224,6 +222,7 @@ def delete_meeting(request, meeting_id):
         request, "meetings/meeting_confirm_delete.html", {"meeting": meeting}
     )
 
+
 # -----------------------------------
 # MINUTES REPOSITORY (NEW)
 # -----------------------------------
@@ -255,19 +254,29 @@ def minutes_repository(request):
     return render(request, "meetings/minutes_repository.html", context)
 
 
-
 # -----------------------------------
-# USER SIGNUP
+# USER SIGNUP (Fixed version)
 # -----------------------------------
 def signup_view(request):
+    """
+    Handles new user registration using CustomUserCreationForm.
+    Hides password rules until errors appear.
+    """
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             messages.success(request, "Account created successfully. Welcome!")
             return redirect("home")
-        messages.error(request, "Please correct the errors below.")
+        else:
+            messages.error(request, "Please fix the errors below.")
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
+
+    # Hide verbose help text until there's an error
+    if not form.errors:
+        for field_name in form.fields:
+            form.fields[field_name].help_text = None
+
     return render(request, "registration/signup.html", {"form": form})

@@ -1,11 +1,14 @@
 from pathlib import Path
 
+# ---------- BASE DIRECTORY ----------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ---------- SECURITY ----------
 SECRET_KEY = "django-insecure-!23&a7-41r(os8!#@@r1&)wqjl^$gdgcuw!4+g%y!%l5ocfnd2"
 DEBUG = True
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: list[str] = []  # Add domain/IP here when deploying
 
+# ---------- INSTALLED APPS ----------
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -13,9 +16,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "meetings",
+    "meetings",  # your app
 ]
 
+# ---------- MIDDLEWARE ----------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -27,12 +31,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# ---------- URL & WSGI ----------
 ROOT_URLCONF = "meeting_manager.urls"
+WSGI_APPLICATION = "meeting_manager.wsgi.application"
 
+# ---------- TEMPLATES ----------
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],  # app templates are used
+        "DIRS": [],  # Django will use app templates automatically
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -45,8 +52,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "meeting_manager.wsgi.application"
-
 # ---------- DATABASE ----------
 DATABASES = {
     "default": {
@@ -55,7 +60,7 @@ DATABASES = {
     }
 }
 
-# ---------- PASSWORD VALIDATION ----------
+# ---------- PASSWORD VALIDATORS ----------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -69,20 +74,31 @@ TIME_ZONE = "Africa/Nairobi"
 USE_I18N = True
 USE_TZ = True
 USE_L10N = False
+
 DATETIME_FORMAT = "M d, Y h:i A"
 TIME_FORMAT = "h:i A"
 
-# ---------- STATIC & MEDIA FILES ----------
-STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+# ---------- STATIC FILES ----------
+# URL to access static files
+STATIC_URL = "/static/"
 
-# Added for file uploads (meeting minutes)
+# Folders Django searches for static files during development
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # global static folder (optional)
+]
+
+# Folder where Django collects all static files during deployment
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# ---------- MEDIA FILES ----------
+# Media files are user-uploaded content (e.g., meeting minutes)
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# ---------- AUTH ----------
+# ---------- AUTHENTICATION ----------
 LOGIN_REDIRECT_URL = "home"
 LOGIN_URL = "/accounts/login/"
 LOGOUT_REDIRECT_URL = "login"
+
+# ---------- DEFAULT PRIMARY KEY FIELD ----------
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

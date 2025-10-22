@@ -1,25 +1,74 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <h3 class="text-center mb-4 fw-bold">Create an Account</h3>
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary w-100 mt-3">Sign Up</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <small>Already have an account? 
-                            <a href="{% url 'login' %}">Login here</a>.
-                        </small>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: 90vh;">
+  <div class="card shadow-lg border-0 w-100" style="max-width: 900px;">
+    <div class="row g-0">
+
+      <!-- LEFT SIDE -->
+      <div class="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center bg-light p-5 text-center">
+        <img src="{% static 'images/mkutano_logo.png' %}" alt="Mkutano IO Logo" class="img-fluid mb-3" style="max-height: 120px;">
+          <p class="text-muted small">
+          Create your account to get started.<br>
+          Manage and organize all your meetings efficiently.
+        </p>
+      
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="col-md-6 bg-white p-5 d-flex flex-column justify-content-center">
+        <h3 class="fw-bold text-center mb-3">Create Account</h3>
+        
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} py-2 small text-center mb-3">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <!-- USERNAME -->
+          <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">Username</label>
+            <div class="w-100">{{ form.username }}</div>
+            {% if form.username.errors %}
+              <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- PASSWORD1 -->
+          <div class="mb-3">
+            <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">Password</label>
+            <div class="w-100">{{ form.password1 }}</div>
+            {% if form.password1.errors %}
+              <div class="text-danger small mt-1">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- PASSWORD2 -->
+          <div class="mb-4">
+            <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">Confirm Password</label>
+            <div class="w-100">{{ form.password2 }}</div>
+            {% if form.password2.errors %}
+              <div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- BUTTON -->
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" style="background-color: #0b1e4e;">
+            Sign Up
+          </button>
+
+          <div class="text-center mt-3">
+            <small>Already have an account?
+              <a href="{% url 'login' %}" class="text-decoration-none">Log in here.</a>
+            </small>
+          </div>
+        </form>
+      </div>
+
     </div>
+  </div>
 </div>
 {% endblock %}

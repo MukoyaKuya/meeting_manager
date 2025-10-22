@@ -5,9 +5,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    # ---------- ADMIN ----------
     path("admin/", admin.site.urls),
 
-    # Authentication routes
+    # ---------- AUTHENTICATION ----------
     path(
         "accounts/login/",
         auth_views.LoginView.as_view(template_name="registration/login.html"),
@@ -15,10 +16,14 @@ urlpatterns = [
     ),
     path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
 
-    # Meetings app routes
+    # ---------- APP ROUTES ----------
     path("", include("meetings.urls")),
 ]
 
-# Serves for uploaded media files (still in development)
+# ---------- DEVELOPMENT: MEDIA & STATIC ----------
 if settings.DEBUG:
+    # Serve uploaded files (meeting minutes, images) during development
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    # Optional: serve static files too if not using collectstatic locally
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

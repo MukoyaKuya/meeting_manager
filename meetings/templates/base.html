@@ -9,7 +9,8 @@
 </head>
 <body>
 {% timezone "Africa/Nairobi" %}
-    <!-- Navbar -->
+
+    {% if request.resolver_match and request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'signup' %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{% url 'home' %}">Meeting Manager</a>
@@ -58,8 +59,8 @@
             </div>
         </div>
     </nav>
+    {% endif %}
 
-    <!-- Flash messages -->
     {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
@@ -71,16 +72,14 @@
     </div>
     {% endif %}
 
-    <!-- Page Content -->
     <main class="container mt-4 mb-5">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
     <footer class="text-center text-muted mt-5 mb-3">
         <div>
             <small>&copy; {{ now|date:"Y" }} Meeting Manager — Capstone Project</small><br>
-            <small>🕒 Current time (Africa/Nairobi): {% now "M d, Y h:i A" %}</small>
+            <small>🕒Current time (Africa/Nairobi): {% now "M d, Y h:i A" %}</small>
         </div>
     </footer>
 
