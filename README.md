@@ -1,22 +1,20 @@
 # Meeting Manager (Django + Bootstrap 5) - Mkutano IO APP
 
-A modern meeting management system built with **Django**, **Python**, and **Bootstrap 5**, allowing users to **schedule, manage, and track meetings** seamlessly.  
-It features a **Bootstrap 5 interface**, a personalized dashboard, and complete **CRUD functionality**.  This is my submission for the **ALX Back-End Web Development Capstone Project**.
-
+As part if the ALX Capstone project, I built a modern meeting management system built with **Django**, **Python**, and **Bootstrap 5**, allowing users to **schedule, manage, and track meetings** seamlessly.  It features a **Bootstrap 5 interface**, a personalized dashboard, and complete **CRUD functionality**.  
 ---
 
 ## Features
 
 - **User Authentication** — Secure login, signup, and logout using Django’s built-in auth system  
-- **Personalized Dashboard** — Displays stats (Upcoming, Ongoing, Ended meetings) for each user  
-- **All Meetings Page** — Read-only list of all meetings created by all users (admin view)  
+- **Personalized Dashboard** — Displays stats (Upcoming, Ongoing, Ended meetings) for each unique user once signed in  
+- **All Meetings Page** — Read-only list of all meetings created by all users   
 - **Smart Conflict Detection** — Prevents room double-booking for overlapping times  
 - **Dynamic Status Tracking** — Meetings automatically show as *Upcoming*, *Ongoing*, or *Ended*  
 - **Search & Filtering** — Search by title, description, or room; filter by status or date range  
 - **Pagination** — Smooth navigation through large meeting lists  
 - **Timezone Aware** — Automatically localized to `Africa/Nairobi`  
 - **Responsive UI** — Built with **Bootstrap 5** for an elegant, mobile-friendly experience  
-- **File Uploads** — Attach optional meeting minutes (PDF/DOC/TXT)  
+- **File Uploads** — Attach optional meeting minutes (Not yet implemented fully. Will add to include files such as PPT, PDF and WORD)  
 
 ---
 
