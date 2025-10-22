@@ -2,88 +2,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meeting Manager</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mkutano IO — Meeting Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* === GLOBAL === */
+    body {
+      background-color: #f8f9fb;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    /* === NAVBAR === */
+    .navbar {
+      letter-spacing: 0.2px;
+    }
+
+    .navbar-brand span {
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .navbar-nav .nav-link {
+      color: #dcdcdc !important;
+      font-weight: 500;
+      padding: 6px 12px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .navbar-nav .nav-link:hover {
+      color: #ffffff !important;
+      text-decoration: none;
+    }
+
+    .navbar-nav .nav-link.active {
+      color: #ffffff !important;
+      border-bottom: 3px solid #0d6efd;
+    }
+
+    .btn-outline-light {
+      border-color: #dcdcdc;
+      color: #f8f9fa;
+      transition: 0.2s ease-in-out;
+    }
+
+    .btn-outline-light:hover {
+      background-color: #f8f9fa;
+      color: #0b1e4e;
+    }
+
+    /* === FOOTER === */
+    footer {
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
+
 <body>
 {% timezone "Africa/Nairobi" %}
+  
+  <!-- NAVIGATION BAR (HIDDEN ON LOGIN & SIGNUP) -->
+  {% if request.resolver_match and request.resolver_match.url_name not in 'login signup' %}
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+    <div class="container px-4">
+      <!-- Brand -->
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'home' %}">
+        <img src="{% static 'images/mkutano_logo.png' %}" alt="Logo" width="35" class="me-2">
+        <span class="text-white">Mkutano <span class="text-primary">IO</span></span>
+      </a>
 
-    {% if request.resolver_match and request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'signup' %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'home' %}">Meeting Manager</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+      <!-- Toggler -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
+      <!-- Navigation Links -->
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center gap-2">
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+               href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'all_meetings' %}active{% endif %}"
+               href="{% url 'all_meetings' %}">All Meetings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'create_meeting' %}active{% endif %}"
+               href="{% url 'create_meeting' %}">Create</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'meeting_list' %}active{% endif %}"
+               href="{% url 'meeting_list' %}">My Meetings</a>
+          </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-                           href="{% url 'home' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'all_meetings' %}active{% endif %}"
-                           href="{% url 'all_meetings' %}">All Meetings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'create_meeting' %}active{% endif %}"
-                           href="{% url 'create_meeting' %}">Create</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'meeting_list' %}active{% endif %}"
-                           href="{% url 'meeting_list' %}">My Meetings</a>
-                    </li>
-
-                    {% if user.is_authenticated %}
-                        <li class="nav-item ms-3">
-                            <form method="post" action="{% url 'logout' %}" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-light btn-sm px-3">Logout</button>
-                            </form>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
-                               href="{% url 'login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'signup' %}active{% endif %}"
-                               href="{% url 'signup' %}">Sign Up</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-    {% endif %}
-
-    {% if messages %}
-    <div class="container mt-3">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
+          {% if user.is_authenticated %}
+          <li class="nav-item ms-3">
+            <form method="post" action="{% url 'logout' %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-light btn-sm px-3 fw-semibold">Logout</button>
+            </form>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
+               href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'signup' %}active{% endif %}"
+               href="{% url 'signup' %}">Sign Up</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
-    {% endif %}
+  </nav>
+  {% endif %}
 
-    <main class="container mt-4 mb-5">
-        {% block content %}{% endblock %}
-    </main>
+  <!-- ALERT MESSAGES -->
+  {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
-    <footer class="text-center text-muted mt-5 mb-3">
-        <div>
-            <small>&copy; {{ now|date:"Y" }} Meeting Manager — Capstone Project</small><br>
-            <small>🕒Current time (Africa/Nairobi): {% now "M d, Y h:i A" %}</small>
-        </div>
-    </footer>
+  <!-- MAIN CONTENT -->
+  <main class="container mt-4 mb-5">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="text-center text-muted mt-5 mb-3">
+    <div>
+      <small>&copy; {{ now|date:"Y" }} Mkutano IO — Capstone Project</small><br>
+      <small>Current time (Africa/Nairobi): {% now "M d, Y h:i A" %}</small>
+    </div>
+  </footer>
 
 {% endtimezone %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
