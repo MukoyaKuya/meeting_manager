@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 class MeetingForm(forms.ModelForm):
     """
-    Form will help in creating and editing meetings, including optional minutes upload.
+    Form will help in creating and editing meetings, (will add upload feature).
     It also handles timezone conversion and preserves existing files on edit.
     """
     class Meta:
@@ -82,12 +82,11 @@ class MeetingForm(forms.ModelForm):
 
 
 # --------------------------------------------
-# User Signup Form (Bootstrap + Conditional Help)
+# User Signup Form (Bootstrap and Conditional Help)
 # --------------------------------------------
 class CustomUserCreationForm(UserCreationForm):
     """
-    The signup form styled with Bootstrap and conditional help text.
-    It shows password rules only when validation fails.
+   This displays password rules only when validation fails.
     """
     class Meta:
         model = User
