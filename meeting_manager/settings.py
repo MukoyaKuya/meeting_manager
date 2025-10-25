@@ -1,25 +1,32 @@
 from pathlib import Path
-import os  # Required for environment variables
+import os
 
 # ---------- BASE DIRECTORY ----------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ---------- SECURITY ----------
-# SECRET_KEY — Read from environment on Render, fallback for local dev
+# SECRET_KEY — use Render env variable or fallback
 SECRET_KEY = os.getenv(
     "SECRET_KEY",
     "django-insecure-!23&a7-41r(os8!#@@r1&)wqjl^$gdgcuw!4+g%y!%l5ocfnd2"
 )
 
-# DEBUG — False in production (Render), True locally
+# DEBUG — False by default in production
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-# ALLOWED_HOSTS — Include Render domain as fallback to prevent DisallowedHost
-ALLOWED_HOSTS = os.getenv(
-    "ALLOWED_HOSTS",
-    "mkutano-io.onrender.com,.onrender.com,127.0.0.1,localhost"
-).split(",")
+# ✅ Ensure mkutano-io.onrender.com always works even if env vars are missing
+ALLOWED_HOSTS = [
+    "mkutano-io.onrender.com",
+    ".onrender.com",
+    "127.0.0.1",
+    "localhost",
+]
+
+# You can also extend with an env variable if provided
+extra_hosts = os.getenv("ALLOWED_HOSTS")
+if extra_hosts:
+    ALLOWED_HOSTS.extend(extra_hosts.split(","))
 
 
 # ---------- INSTALLED APPS ----------
@@ -73,7 +80,6 @@ TEMPLATES = [
 
 
 # ---------- DATABASE ----------
-# (SQLite for now — can switch to PostgreSQL on Render later)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -134,9 +140,9 @@ REST_FRAMEWORK = {
 }
 
 
-# ---------- PRODUCTION SECURITY RECOMMENDATIONS ----------
+# ---------- PRODUCTION SECURITY SETTINGS ----------
 if not DEBUG:
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
