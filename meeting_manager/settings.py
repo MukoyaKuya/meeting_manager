@@ -1,12 +1,14 @@
 from pathlib import Path
+import os  # 
 
 # ---------- BASE DIRECTORY ----------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # ---------- SECURITY ----------
 SECRET_KEY = "django-insecure-!23&a7-41r(os8!#@@r1&)wqjl^$gdgcuw!4+g%y!%l5ocfnd2"
-DEBUG = False
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+DEBUG = True
+ALLOWED_HOSTS: list[str] = []  # Add domain/IP here when deploying
 
 # ---------- INSTALLED APPS ----------
 INSTALLED_APPS = [
@@ -34,9 +36,11 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
 # ---------- URL & WSGI ----------
 ROOT_URLCONF = "meeting_manager.urls"
 WSGI_APPLICATION = "meeting_manager.wsgi.application"
+
 
 # ---------- TEMPLATES ----------
 TEMPLATES = [
@@ -55,6 +59,7 @@ TEMPLATES = [
     },
 ]
 
+
 # ---------- DATABASE ----------
 DATABASES = {
     "default": {
@@ -63,6 +68,7 @@ DATABASES = {
     }
 }
 
+
 # ---------- PASSWORD VALIDATORS ----------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -70,6 +76,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
 
 # ---------- TIMEZONE & LOCALIZATION ----------
 LANGUAGE_CODE = "en-us"
@@ -81,30 +88,33 @@ USE_L10N = False
 DATETIME_FORMAT = "M d, Y h:i A"
 TIME_FORMAT = "h:i A"
 
+
 # ---------- STATIC FILES ----------
-# URL to access static files
 STATIC_URL = "/static/"
 
 # Folders Django searches for static files during development
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # global static folder 
+    BASE_DIR / "static",  # global static folder
 ]
 
 # Folder where Django collects all static files during deployment
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+
 # ---------- MEDIA FILES ----------
-# Media files are user-uploaded content (e.g., meeting minutes)
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
 
 # ---------- AUTHENTICATION ----------
 LOGIN_REDIRECT_URL = "home"
 LOGIN_URL = "/accounts/login/"
 LOGOUT_REDIRECT_URL = "login"
 
+
 # ---------- DEFAULT PRIMARY KEY FIELD ----------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 
 # ---------- DJANGO REST FRAMEWORK ----------
 REST_FRAMEWORK = {
@@ -116,3 +126,13 @@ REST_FRAMEWORK = {
     ),
 }
 
+
+# ---------- PRODUCTION SECURITY RECOMMENDATIONS ----------
+if not DEBUG:
+    SECURE_HSTS_SECONDS = 31536000  # 
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
