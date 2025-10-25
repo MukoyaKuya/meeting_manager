@@ -5,8 +5,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ---------- SECURITY ----------
 SECRET_KEY = "django-insecure-!23&a7-41r(os8!#@@r1&)wqjl^$gdgcuw!4+g%y!%l5ocfnd2"
-DEBUG = True
-ALLOWED_HOSTS: list[str] = []  # Add domain/IP here when deploying
+DEBUG = False
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 # ---------- INSTALLED APPS ----------
 INSTALLED_APPS = [
