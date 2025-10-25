@@ -1,14 +1,26 @@
 from pathlib import Path
-import os  # 
+import os  # Required for environment variables
 
 # ---------- BASE DIRECTORY ----------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ---------- SECURITY ----------
-SECRET_KEY = "django-insecure-!23&a7-41r(os8!#@@r1&)wqjl^$gdgcuw!4+g%y!%l5ocfnd2"
-DEBUG = True
-ALLOWED_HOSTS: list[str] = []  # Add domain/IP here when deploying
+# SECRET_KEY — Read from environment on Render, fallback for local dev
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-!23&a7-41r(os8!#@@r1&)wqjl^$gdgcuw!4+g%y!%l5ocfnd2"
+)
+
+# DEBUG — False in production (Render), True locally
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+
+# ALLOWED_HOSTS — Include Render domain as fallback to prevent DisallowedHost
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "mkutano-io.onrender.com,.onrender.com,127.0.0.1,localhost"
+).split(",")
+
 
 # ---------- INSTALLED APPS ----------
 INSTALLED_APPS = [
@@ -46,7 +58,7 @@ WSGI_APPLICATION = "meeting_manager.wsgi.application"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],  # Django will use app templates automatically
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -61,6 +73,7 @@ TEMPLATES = [
 
 
 # ---------- DATABASE ----------
+# (SQLite for now — can switch to PostgreSQL on Render later)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -91,13 +104,7 @@ TIME_FORMAT = "h:i A"
 
 # ---------- STATIC FILES ----------
 STATIC_URL = "/static/"
-
-# Folders Django searches for static files during development
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # global static folder
-]
-
-# Folder where Django collects all static files during deployment
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
@@ -129,7 +136,7 @@ REST_FRAMEWORK = {
 
 # ---------- PRODUCTION SECURITY RECOMMENDATIONS ----------
 if not DEBUG:
-    SECURE_HSTS_SECONDS = 31536000  # 
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
