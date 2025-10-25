@@ -16,7 +16,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "meetings",  # your app
+    "rest_framework",
+    "meetings",  
+    "api",
 ]
 
 # ---------- MIDDLEWARE ----------
