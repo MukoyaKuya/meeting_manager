@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ---------- SECURITY ----------
 SECRET_KEY = "django-insecure-!23&a7-41r(os8!#@@r1&)wqjl^$gdgcuw!4+g%y!%l5ocfnd2"
 DEBUG = True
-ALLOWED_HOSTS: list[str] = []  # Will add domain/IP here when deploying
+ALLOWED_HOSTS: list[str] = []  # Add domain/IP here when deploying
 
 # ---------- INSTALLED APPS ----------
 INSTALLED_APPS = [
@@ -16,7 +16,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "meetings",  # 
+    "meetings",  # your app
 ]
 
 # ---------- MIDDLEWARE ----------
@@ -102,3 +102,14 @@ LOGOUT_REDIRECT_URL = "login"
 
 # ---------- DEFAULT PRIMARY KEY FIELD ----------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ---------- DJANGO REST FRAMEWORK ----------
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+}
+
