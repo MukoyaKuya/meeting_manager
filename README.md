@@ -63,7 +63,6 @@ meeting_manager/
 git clone https://github.com/MukoyaKuya/meeting_manager.git
 cd meeting_manager
 ```
-
 ### 2. Create & Activate Virtual Environment
 
 **For Windows:**
