@@ -88,7 +88,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",  # global static folder 
 ]
 
-# Folder where Django collects all static files during deployment
+# Folder where Django collects all static file during deployment
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # ---------- MEDIA FILES ----------
@@ -104,7 +104,7 @@ LOGOUT_REDIRECT_URL = "login"
 # ---------- DEFAULT PRIMARY KEY FIELD ----------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ---------- DJANGO REST FRAMEWORK ----------
+# ---------- DJANGO REST FRAMEWORK -------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
