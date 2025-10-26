@@ -16,7 +16,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "meetings",  # your app
+    "rest_framework",
+    "meetings",  
+    "api",
+    "django_extensions",
 ]
 
 # ---------- MIDDLEWARE ----------
@@ -111,5 +114,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
+    "DEFAULT_RENDERER_CLASSES": (
+        "rest_framework.renderers.JSONRenderer",  # disables DRF login interface
+    ),
 }
-
