@@ -25,5 +25,4 @@ if settings.DEBUG:
     # Serve uploaded files (meeting minutes, images) during development
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-    # Optional: serve static files too if not using collectstatic locally
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+ 
